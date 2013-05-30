@@ -1,6 +1,7 @@
-require "planefinder/version"
 require "httparty"
 require "json"
+require_relative "./planefinder/version"
+require_relative "./planefinder/airplane_category"
 
 module Planefinder
   include HTTParty
@@ -11,6 +12,10 @@ module Planefinder
 
   def self.get_categories
     response = self.get(@@urls[:airplane_categories])
-    JSON.parse(response.body)
+    categories = []
+    JSON.parse(response.body).each do |cat|
+      categories << AirplaneCategory.new(cat)
+    end
+    categories
   end
 end

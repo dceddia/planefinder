@@ -4,6 +4,11 @@
 # loaded once.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+def file_fixture(filename)
+  open(File.join(File.dirname(__FILE__), 'fixtures', "#{filename.to_s}")).read
+end
+
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
@@ -14,4 +19,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
+
+  config.add_setting :fixture_path
+  config.fixture_path = 'foo'
 end
