@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Planefinder::VERSION
   spec.authors       = ["Dave Ceddia"]
   spec.email         = ["dceddia@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Find airplanes for sale and search the results}
+  spec.summary       = %q{Find airplanes for sale and search the results}
   spec.homepage      = ""
   spec.license       = "MIT"
 
