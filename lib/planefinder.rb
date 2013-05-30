@@ -14,6 +14,7 @@ module Planefinder
     response = self.get(@@urls[:airplane_categories])
     categories = []
     JSON.parse(response.body).each do |cat|
+      next if(cat.has_key?('special_use_counts'))
       categories << AirplaneCategory.new(cat)
     end
     categories

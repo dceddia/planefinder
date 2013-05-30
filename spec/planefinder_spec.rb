@@ -16,8 +16,13 @@ describe Planefinder do
 
     it "should retrieve aircraft categories" do
       categories = Planefinder.get_categories
-      categories.length.should == 10
+      categories.length.should == 9
       categories.each { |c| c.class.should == Planefinder::AirplaneCategory }
+    end
+
+    it "should ignore the 'special_use_counts' category" do
+      categories = Planefinder.get_categories
+      categories.each { |c| c.id.should be > 0 }
     end
   end
 end
