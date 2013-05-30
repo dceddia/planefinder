@@ -1,17 +1,19 @@
 module Planefinder
   class AirplaneMake
-    attr_reader :count, :id, :name
+    attr_reader :count, :id, :name, :category_id
     
-    def initialize(json)
+    def initialize(json, category_id)
       @count = json['count'].to_i
       @id = json['id'].to_i
       @name = json['name'].to_s
+      @category_id = category_id.to_i
     end
 
     def ==(other)
       @count == other.count &&
       @id == other.id &&
-      @name == other.name
+      @name == other.name &&
+      @category_id == other.category_id
     end
   end
 end
