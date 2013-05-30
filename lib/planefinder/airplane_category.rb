@@ -14,5 +14,12 @@ module Planefinder
       throw "Category must have count, id, name, and sort_priority fields" unless
         ['count', 'id', 'name', 'sort_priority'].all? { |field| cat.include?(field) }
     end
+
+    def ==(other)
+      @count == other.count &&
+      @id == other.id &&
+      @name == other.name &&
+      @sort_priority == other.sort_priority
+    end
   end
 end

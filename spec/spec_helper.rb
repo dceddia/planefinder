@@ -5,6 +5,8 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
+require 'planefinder'
+
 def file_fixture(filename)
   open(File.join(File.dirname(__FILE__), 'fixtures', "#{filename.to_s}")).read
 end

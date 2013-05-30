@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'planefinder'
 
 module Planefinder
   describe AirplaneCategory do
@@ -16,6 +15,13 @@ module Planefinder
     it "should throw an error with an invalid category" do
       special = json_categories.select { |c| c.has_key?('special_use_counts') }
       expect { AirplaneCategory.new(special) }.to raise_error
+    end
+
+    it "should support ==" do
+      a = AirplaneCategory.new(json_categories.first)
+      b = AirplaneCategory.new(json_categories.first)
+
+      a.should == b
     end
   end
 end
