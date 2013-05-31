@@ -1,4 +1,5 @@
 module Planefinder
+  # Contains an airplane listing, including contact info, total engine time, etc.
   class AirplaneListing
     def initialize(json)
       @properties = json

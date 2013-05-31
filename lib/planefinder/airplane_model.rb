@@ -1,4 +1,5 @@
 module Planefinder
+  # Contains aircraft models like "DA20" (Diamond) or "172" (Cessna)
   class AirplaneModel
     attr_reader :count, :id, :model_group, :name, :category_id, :make_id
     

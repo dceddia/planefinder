@@ -1,4 +1,5 @@
 module Planefinder
+  # Contains categories like "Single Engine Piston" or "Jet" or "Turbine Helicopter"
   class AirplaneCategory
     attr_reader :count, :id, :name, :sort_priority
 
@@ -20,6 +21,10 @@ module Planefinder
       @id == other.id &&
       @name == other.name &&
       @sort_priority == other.sort_priority
+    end
+    
+    def get_makes
+      Planefinder.get_makes_for_category(@id)
     end
   end
 end

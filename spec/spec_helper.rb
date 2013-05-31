@@ -24,4 +24,12 @@ RSpec.configure do |config|
 
   config.add_setting :fixture_path
   config.fixture_path = 'foo'
+  
+  config.before(:suite) do
+    FakeWeb.allow_net_connect = false
+  end
+
+  config.after(:suite) do
+    FakeWeb.allow_net_connect = true
+  end
 end

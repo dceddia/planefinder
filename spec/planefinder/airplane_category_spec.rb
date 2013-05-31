@@ -23,5 +23,11 @@ module Planefinder
 
       a.should == b
     end
+    
+    it "should be able to fetch makes for its category" do
+      ac = AirplaneCategory.new(json_categories.first)
+      makes = ac.get_makes
+      makes.each { |m| m.category_id.should == ac.id }
+    end
   end
 end

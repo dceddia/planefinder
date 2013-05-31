@@ -1,4 +1,5 @@
 module Planefinder
+  # Contains aircraft makes like "Cessna" or "Robinson"
   class AirplaneMake
     attr_reader :count, :id, :name, :category_id
     

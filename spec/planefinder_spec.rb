@@ -29,7 +29,6 @@ describe Planefinder do
     %w[get_makes_for_category get_makes].each do |method_name|
       describe "##{method_name}" do
         before do
-          FakeWeb.allow_net_connect = false
           FakeWeb.register_uri(:get, 
                                'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=1&make_type_id=1',
                                :body => file_fixture('single_engine_makes.json'))
@@ -41,6 +40,10 @@ describe Planefinder do
                                :body => file_fixture('piston_helicopter_makes.json'))
         end
 
+        it "should not allow nil makes" do
+          expect { Planefinder.send(method_name, nil) }.to raise_error("make_id must be a number > 0")
+        end
+        
         it "should retrieve a list of Single Engine makes for category 1" do
           makes = Planefinder.send(method_name, 1)
           makes.length.should == 136
@@ -73,7 +76,6 @@ describe Planefinder do
     %w[get_models_for_category_and_make get_models].each do |method_name|
       describe "##{method_name}" do
         before do
-          FakeWeb.allow_net_connect = false
           FakeWeb.register_uri(:get, 
                                'http://www.trade-a-plane.com/app_ajax/get_aircraft_models?category_id=1&make_id=155',
                                :body => file_fixture('diamond_models.json'))
@@ -82,6 +84,12 @@ describe Planefinder do
                                :body => file_fixture('robinson_models.json'))
         end
       
+        it "should throw an error if category_id or make_id are nil" do
+          expect { Planefinder.send(method_name, nil, nil) }.to raise_error("category_id and make_id must be > 0")
+          expect { Planefinder.send(method_name, 1, nil) }.to raise_error("category_id and make_id must be > 0")
+          expect { Planefinder.send(method_name, nil, 1) }.to raise_error("category_id and make_id must be > 0")
+        end
+        
         it "should retrieve an array of AirplaneModel" do
           Planefinder.send(method_name, 1, 155).each do |model|
             model.class.should == Planefinder::AirplaneModel
@@ -104,7 +112,6 @@ describe Planefinder do
   context "retrieving airplane listings" do
     describe "#get_listings_for_model_make_category" do
       before do
-        FakeWeb.allow_net_connect = false
         FakeWeb.register_uri(:get, 
                              'http://www.trade-a-plane.com/app_ajax/search?s-type=aircraft&model=DA40XL&make=Diamond&category=Single%20Engine%20Piston',
                              :body => file_fixture('diamond_models.json'))
