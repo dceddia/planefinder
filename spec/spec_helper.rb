@@ -27,6 +27,27 @@ RSpec.configure do |config|
   
   config.before(:suite) do
     FakeWeb.allow_net_connect = false
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_categories?listing_type_id=1',
+                         :body => file_fixture('airplane_categories.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_aircraft_models?category_id=1&make_id=155',
+                         :body => file_fixture('diamond_models.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_aircraft_models?category_id=100&make_id=406',
+                         :body => file_fixture('robinson_models.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=1&make_type_id=1',
+                         :body => file_fixture('single_engine_makes.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=4&make_type_id=1',
+                         :body => file_fixture('jet_makes.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=100&make_type_id=1',
+                         :body => file_fixture('piston_helicopter_makes.json'))
+    FakeWeb.register_uri(:get, 
+                         'http://www.trade-a-plane.com/app_ajax/search?s-type=aircraft&model=DA40XL&make=Diamond&category=Single%20Engine%20Piston',
+                         :body => file_fixture('diamond_models.json'))
   end
 
   config.after(:suite) do
