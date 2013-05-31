@@ -2,15 +2,17 @@ require 'spec_helper'
 
 module Planefinder
   describe AirplaneModel do
+    let(:diamond_models) { JSON.parse(file_fixture('diamond_models.json')) }
+    let(:da40) { diamond_models.select { |m| m['name'] == "DA40" }.first }
+    let(:da40xls) { diamond_models.select { |m| m['name'] == "DA40 XLS" }.first }
+    
     describe "constructor" do
       it "should take 3 arguments: json, category_id, make_id" do
-        json_model = JSON.parse(file_fixture('diamond_models.json')).first
-        am = AirplaneModel.new(json_model, 1, 155)
+        am = AirplaneModel.new(da40, 1, 155)
       end
       
       it "should have appropriate values after creation" do
-        json_model = JSON.parse(file_fixture('diamond_models.json')).select { |m| m['name'] == "DA40" }.first
-        am = AirplaneModel.new(json_model, 1, 155)
+        am = AirplaneModel.new(da40, 1, 155)
         am.name.should == "DA40"
         am.model_group.should == "DA40 Series"
         am.id.should == 4140
@@ -21,9 +23,6 @@ module Planefinder
     end
     
     it "should support ==" do
-      diamond_models = JSON.parse(file_fixture('diamond_models.json'))
-      da40 = diamond_models.select { |m| m['name'] == 'DA40' }.first
-      da40xls = diamond_models.select { |m| m['name'] == 'DA40 XLS' }.first
       a = AirplaneModel.new(da40, 1, 155)
       b = AirplaneModel.new(da40, 1, 155)
       c = AirplaneModel.new(da40xls, 1, 155)
@@ -36,6 +35,11 @@ module Planefinder
       b.should_not == c
       c.should_not == d
       d.should_not == e
+    end
+    
+    it "should be able to retrieve listings" do
+      am = AirplaneModel.new(da40, 1, 155)
+      pending "pass the string versions of model, category, and make to search_by..."
     end
   end
 end

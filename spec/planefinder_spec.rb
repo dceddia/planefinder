@@ -83,7 +83,14 @@ describe Planefinder do
   
   context "retrieving airplane listings" do
     describe "#get_listings_for_model_make_category" do
-      pending
+      it "should throw an error if category_id, model_id, or make_id are nil" do
+        bad_args = [nil, 1].repeated_permutation(3).to_a.keep_if { |p| p != [1,1,1] }
+        bad_args.each do |args|
+          expect { Planefinder.get_listings_for_model_make_category(*args) }.to raise_error("category_id, model_id, and make_id must be > 0")
+        end
+      end
+      
+      pending "Rename this to search_by_model_make_category, and make it take strings, and call the /app_ajax/search url"
     end
   end
 end

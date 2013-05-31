@@ -15,6 +15,10 @@ module Planefinder
   @@urls[:airplane_makes_for_category] = "/app_ajax/get_aircraft_makes?category_id=%s&make_type_id=1"
   @@urls[:airplane_models_for_category_and_make] = "/app_ajax/get_aircraft_models?category_id=%s&make_id=%s"
   
+  def self.valid_args?(*args)
+    args.all? { |a| a.to_i > 0 }
+  end
+  
   def self.get_categories
     response = self.get(@@urls[:airplane_categories])
     categories = []
@@ -26,7 +30,7 @@ module Planefinder
   end
 
   def self.get_makes_for_category(cat_id)
-    raise "make_id must be a number > 0" unless cat_id.to_i > 0
+    raise "make_id must be a number > 0" unless self.valid_args?(cat_id)
     response = self.get(@@urls[:airplane_makes_for_category] % cat_id.to_s)
     makes = []
     JSON.parse(response.body).each do |make|
@@ -36,13 +40,17 @@ module Planefinder
   end
   
   def self.get_models_for_category_and_make(cat_id, make_id)
-    raise "category_id and make_id must be > 0" unless cat_id.to_i > 0 && make_id.to_i > 0
+    raise "category_id and make_id must be > 0" unless self.valid_args?(cat_id, make_id)
     response = self.get(@@urls[:airplane_models_for_category_and_make] % [cat_id, make_id])
     models = []
     JSON.parse(response.body).each do |model|
       models << AirplaneModel.new(model, cat_id, make_id)
     end
     models
+  end
+  
+  def self.get_listings_for_model_make_category(model_id, make_id, cat_id)
+    raise "category_id, model_id, and make_id must be > 0" unless self.valid_args?(model_id, make_id, cat_id)
   end
   
   class << Planefinder
