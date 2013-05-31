@@ -43,6 +43,7 @@ module Planefinder
   end
   
   class << Planefinder
+    alias_method :get_makes, :get_makes_for_category
     alias_method :get_models, :get_models_for_category_and_make
   end
 end

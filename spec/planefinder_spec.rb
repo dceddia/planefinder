@@ -26,42 +26,46 @@ describe Planefinder do
   end
 
   context "retrieving makes" do
-    before do
-      FakeWeb.allow_net_connect = false
-      FakeWeb.register_uri(:get, 
-                           'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=1&make_type_id=1',
-                           :body => file_fixture('single_engine_makes.json'))
-      FakeWeb.register_uri(:get, 
-                           'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=4&make_type_id=1',
-                           :body => file_fixture('jet_makes.json'))
-      FakeWeb.register_uri(:get, 
-                           'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=100&make_type_id=1',
-                           :body => file_fixture('piston_helicopter_makes.json'))
-    end
+    %w[get_makes_for_category get_makes].each do |method_name|
+      describe "##{method_name}" do
+        before do
+          FakeWeb.allow_net_connect = false
+          FakeWeb.register_uri(:get, 
+                               'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=1&make_type_id=1',
+                               :body => file_fixture('single_engine_makes.json'))
+          FakeWeb.register_uri(:get, 
+                               'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=4&make_type_id=1',
+                               :body => file_fixture('jet_makes.json'))
+          FakeWeb.register_uri(:get, 
+                               'http://www.trade-a-plane.com/app_ajax/get_aircraft_makes?category_id=100&make_type_id=1',
+                               :body => file_fixture('piston_helicopter_makes.json'))
+        end
 
-    it "should retrieve a list of Single Engine makes for category 1" do
-      makes = Planefinder.get_makes_for_category(1)
-      makes.length.should == 136
-      makes.select { |m| m.name == 'Cessna' }.length.should == 1
-    end
+        it "should retrieve a list of Single Engine makes for category 1" do
+          makes = Planefinder.send(method_name, 1)
+          makes.length.should == 136
+          makes.select { |m| m.name == 'Cessna' }.length.should == 1
+        end
 
-    it "should retrieve a list of Jet makes for category 4" do
-      makes = Planefinder.get_makes_for_category(4)
-      makes.length.should == 28
-      makes.select { |m| m.name == 'Boeing' }.length.should == 1
-    end
+        it "should retrieve a list of Jet makes for category 4" do
+          makes = Planefinder.send(method_name, 4)
+          makes.length.should == 28
+          makes.select { |m| m.name == 'Boeing' }.length.should == 1
+        end
 
-    it "should retrieve a list of Helicopter makes for category 100" do
-      makes = Planefinder.get_makes_for_category(100)
-      makes.length.should == 9
-      makes.select { |m| m.name == 'Robinson' }.length.should == 1
-    end
+        it "should retrieve a list of Helicopter makes for category 100" do
+          makes = Planefinder.send(method_name, 100)
+          makes.length.should == 9
+          makes.select { |m| m.name == 'Robinson' }.length.should == 1
+        end
     
-    it "should accept strings or integers" do
-      makes_int = Planefinder.get_makes_for_category(1)
-      makes_str = Planefinder.get_makes_for_category("1")
-      makes_int.length.should == makes_str.length
-      makes_int.should == makes_str
+        it "should accept strings or integers" do
+          makes_int = Planefinder.send(method_name, 1)
+          makes_str = Planefinder.send(method_name, "1")
+          makes_int.length.should == makes_str.length
+          makes_int.should == makes_str
+        end
+      end
     end
   end
   
