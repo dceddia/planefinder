@@ -100,4 +100,15 @@ describe Planefinder do
       end
     end
   end
+  
+  context "retrieving airplane listings" do
+    describe "#get_listings_for_model_make_category" do
+      before do
+        FakeWeb.allow_net_connect = false
+        FakeWeb.register_uri(:get, 
+                             'http://www.trade-a-plane.com/app_ajax/search?s-type=aircraft&model=DA40XL&make=Diamond&category=Single%20Engine%20Piston',
+                             :body => file_fixture('diamond_models.json'))
+      end
+    end
+  end
 end

@@ -4,6 +4,7 @@ require_relative "./planefinder/version"
 require_relative "./planefinder/airplane_category"
 require_relative "./planefinder/airplane_make"
 require_relative "./planefinder/airplane_model"
+require_relative "./planefinder/airplane_listing"
 
 module Planefinder
   include HTTParty
