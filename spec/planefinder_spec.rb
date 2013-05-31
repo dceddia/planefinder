@@ -66,7 +66,7 @@ describe Planefinder do
   end
   
   context "retrieving models" do
-    describe "#get_models_for_category_and_make" do
+    shared_examples "#get_models_for_category_and_make" do
       before do
         FakeWeb.allow_net_connect = false
         FakeWeb.register_uri(:get, 
