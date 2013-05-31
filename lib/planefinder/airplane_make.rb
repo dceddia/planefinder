@@ -16,5 +16,9 @@ module Planefinder
       @name == other.name &&
       @category_id == other.category_id
     end
+    
+    def get_models
+      Planefinder.get_models_for_category_and_make(@category_id, @id)
+    end
   end
 end
