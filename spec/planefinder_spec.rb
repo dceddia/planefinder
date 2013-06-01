@@ -21,8 +21,8 @@ describe Planefinder do
   context "retrieving makes" do
     %w[get_makes_for_category get_makes].each do |method_name|
       describe "##{method_name}" do
-        it "should not allow nil makes" do
-          expect { Planefinder.send(method_name, nil) }.to raise_error("make_id must be a number > 0")
+        it "should not allow nil categories" do
+          expect { Planefinder.send(method_name, nil) }.to raise_error("cat_id must be a number > 0")
         end
         
         it "should retrieve a list of Single Engine makes for category 1" do

@@ -30,7 +30,7 @@ module Planefinder
   end
 
   def self.get_makes_for_category(cat_id)
-    raise "make_id must be a number > 0" unless self.valid_args?(cat_id)
+    raise "cat_id must be a number > 0" unless self.valid_args?(cat_id)
     response = self.get(@@urls[:airplane_makes_for_category] % cat_id.to_s)
     makes = []
     JSON.parse(response.body).each do |make|
