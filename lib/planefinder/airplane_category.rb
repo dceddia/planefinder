@@ -3,7 +3,7 @@ module Planefinder
   class AirplaneCategory
     attr_reader :count, :id, :name, :sort_priority
 
-    def initialize(json_category, special = false)
+    def initialize(json_category)
       validate_category(json_category)
       @count = json_category['count'].to_i
       @id = json_category['id'].to_i
@@ -24,7 +24,7 @@ module Planefinder
     end
     
     def get_makes
-      Planefinder.get_makes_for_category(@id)
+      Planefinder.get_makes_for_category(self)
     end
   end
 end

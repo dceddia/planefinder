@@ -1,4 +1,4 @@
-require 'fakeweb'
+require 'spec_helper'
 
 describe Planefinder do
   it "should have a version" do
@@ -20,34 +20,26 @@ describe Planefinder do
 
   context "retrieving makes" do
     %w[get_makes_for_category get_makes].each do |method_name|
-      describe "##{method_name}" do
-        it "should not allow nil categories" do
-          expect { Planefinder.send(method_name, nil) }.to raise_error("cat_id must be a number > 0")
-        end
-        
+      describe "##{method_name}" do   
         it "should retrieve a list of Single Engine makes for category 1" do
-          makes = Planefinder.send(method_name, 1)
+          cat = mock(Planefinder::AirplaneCategory, :id => 1)
+          makes = Planefinder.send(method_name, cat)
           makes.length.should == 136
           makes.select { |m| m.name == 'Cessna' }.length.should == 1
         end
 
         it "should retrieve a list of Jet makes for category 4" do
-          makes = Planefinder.send(method_name, 4)
+          cat = double(Planefinder::AirplaneCategory, :id => 4)
+          makes = Planefinder.send(method_name, cat)
           makes.length.should == 28
           makes.select { |m| m.name == 'Boeing' }.length.should == 1
         end
 
         it "should retrieve a list of Helicopter makes for category 100" do
-          makes = Planefinder.send(method_name, 100)
+          cat = double(Planefinder::AirplaneCategory, :id => 100)
+          makes = Planefinder.send(method_name, cat)
           makes.length.should == 9
           makes.select { |m| m.name == 'Robinson' }.length.should == 1
-        end
-    
-        it "should accept strings or integers" do
-          makes_int = Planefinder.send(method_name, 1)
-          makes_str = Planefinder.send(method_name, "1")
-          makes_int.length.should == makes_str.length
-          makes_int.should == makes_str
         end
       end
     end
@@ -55,26 +47,26 @@ describe Planefinder do
   
   context "retrieving models" do
     %w[get_models_for_category_and_make get_models].each do |method_name|
-      describe "##{method_name}" do
-        it "should throw an error if category_id or make_id are nil" do
-          expect { Planefinder.send(method_name, nil, nil) }.to raise_error("category_id and make_id must be > 0")
-          expect { Planefinder.send(method_name, 1, nil) }.to raise_error("category_id and make_id must be > 0")
-          expect { Planefinder.send(method_name, nil, 1) }.to raise_error("category_id and make_id must be > 0")
-        end
-        
+      describe "##{method_name}" do    
         it "should retrieve an array of AirplaneModel" do
-          Planefinder.send(method_name, 1, 155).each do |model|
+          cat = double(Planefinder::AirplaneCategory, :id => 1)
+          make = double(Planefinder::AirplaneMake, :id => 155)
+          Planefinder.send(method_name, cat, make).each do |model|
             model.class.should == Planefinder::AirplaneModel
           end
         end
       
         it "should retrieve a list of Diamond aircraft models for category 1, make 155" do
-          models = Planefinder.send(method_name, 1, 155)
+          cat = double(Planefinder::AirplaneCategory, :id => 1)
+          make = double(Planefinder::AirplaneMake, :id => 155)
+          models = Planefinder.send(method_name, cat, make)
           models.select { |m| m.name == 'DA40' }.length.should == 1
         end
       
         it "should retrieve a list of Robinson helicopter models for category 100, make 406" do
-          models = Planefinder.send(method_name, 100, 406)
+          cat = double(Planefinder::AirplaneCategory, :id => 100)
+          make = double(Planefinder::AirplaneMake, :id => 406)
+          models = Planefinder.send(method_name, cat, make)
           models.select { |m| m.name == 'R44' }.length.should == 1
         end
       end
@@ -83,13 +75,6 @@ describe Planefinder do
   
   context "retrieving airplane listings" do
     describe "#get_listings_for_model_make_category" do
-      it "should throw an error if category_id, model_id, or make_id are nil" do
-        bad_args = [nil, 1].repeated_permutation(3).to_a.keep_if { |p| p != [1,1,1] }
-        bad_args.each do |args|
-          expect { Planefinder.get_listings_for_model_make_category(*args) }.to raise_error("category_id, model_id, and make_id must be > 0")
-        end
-      end
-      
       pending "Rename this to search_by_model_make_category, and make it take strings, and call the /app_ajax/search url"
     end
   end

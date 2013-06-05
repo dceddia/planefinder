@@ -29,28 +29,25 @@ module Planefinder
     categories
   end
 
-  def self.get_makes_for_category(cat_id)
-    raise "cat_id must be a number > 0" unless self.valid_args?(cat_id)
-    response = self.get(@@urls[:airplane_makes_for_category] % cat_id.to_s)
+  def self.get_makes_for_category(category)
+    response = self.get(@@urls[:airplane_makes_for_category] % category.id)
     makes = []
     JSON.parse(response.body).each do |make|
-      makes << AirplaneMake.new(make, cat_id)
+      makes << AirplaneMake.new(make, category.id)
     end
     makes
   end
   
-  def self.get_models_for_category_and_make(cat_id, make_id)
-    raise "category_id and make_id must be > 0" unless self.valid_args?(cat_id, make_id)
-    response = self.get(@@urls[:airplane_models_for_category_and_make] % [cat_id, make_id])
+  def self.get_models_for_category_and_make(category, make)
+    response = self.get(@@urls[:airplane_models_for_category_and_make] % [category.id, make.id])
     models = []
     JSON.parse(response.body).each do |model|
-      models << AirplaneModel.new(model, cat_id, make_id)
+      models << AirplaneModel.new(model, category.id, make.id)
     end
     models
   end
   
   def self.get_listings_for_model_make_category(model_id, make_id, cat_id)
-    raise "category_id, model_id, and make_id must be > 0" unless self.valid_args?(model_id, make_id, cat_id)
   end
   
   class << Planefinder

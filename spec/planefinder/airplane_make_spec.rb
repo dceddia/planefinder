@@ -4,12 +4,13 @@ module Planefinder
   describe AirplaneMake do
     let(:json_make) { JSON.parse(file_fixture('single_engine_makes.json')).select{ |m| m['name'] == 'Diamond' }.first }
     
-    it "should be initializable with a JSON object and a category id" do
-      am = AirplaneMake.new(json_make, 1)
+    it "should be initializable with a JSON object and a category" do
+      category = double(AirplaneCategory)
+      am = AirplaneMake.new(json_make, category)
       am.count.should == 13
       am.id.should == 155
       am.name.should == "Diamond"
-      am.category_id.should == 1
+      am.category.should == category
     end
 
     it "should support ==" do
@@ -21,9 +22,10 @@ module Planefinder
     end
     
     it "should be able to fetch models for its make" do
+      models = [1, 2, 3]
+      Planefinder.stub(:get_models_for_category_and_make) { models }
       am = AirplaneMake.new(json_make, 1)
-      models = am.get_models
-      models.each { |m| m.make_id.should == am.id }
+      am.get_models.should == models
     end
   end
 end

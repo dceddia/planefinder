@@ -7,18 +7,20 @@ module Planefinder
     let(:da40xls) { diamond_models.select { |m| m['name'] == "DA40 XLS" }.first }
     
     describe "constructor" do
-      it "should take 3 arguments: json, category_id, make_id" do
-        am = AirplaneModel.new(da40, 1, 155)
+      it "should take 3 arguments: json, category, make" do
+        am = AirplaneModel.new(da40, double(AirplaneCategory), double(AirplaneMake))
       end
       
       it "should have appropriate values after creation" do
-        am = AirplaneModel.new(da40, 1, 155)
+        cat = double(AirplaneCategory)
+        make = double(AirplaneMake)
+        am = AirplaneModel.new(da40, cat, make)
         am.name.should == "DA40"
         am.model_group.should == "DA40 Series"
         am.id.should == 4140
         am.count.should == 5
-        am.category_id.should == 1
-        am.make_id.should == 155
+        am.category.should == cat
+        am.make.should == make
       end
     end
     
@@ -38,7 +40,7 @@ module Planefinder
     end
     
     it "should be able to retrieve listings" do
-      am = AirplaneModel.new(da40, 1, 155)
+      am = AirplaneModel.new(da40, double(AirplaneCategory), double(AirplaneMake))
       pending "pass the string versions of model, category, and make to search_by..."
     end
   end

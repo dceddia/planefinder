@@ -1,24 +1,24 @@
 module Planefinder
   # Contains aircraft makes like "Cessna" or "Robinson"
   class AirplaneMake
-    attr_reader :count, :id, :name, :category_id
+    attr_reader :count, :id, :name, :category
     
-    def initialize(json, category_id)
+    def initialize(json, category)
       @count = json['count'].to_i
       @id = json['id'].to_i
       @name = json['name'].to_s
-      @category_id = category_id.to_i
+      @category = category
     end
 
     def ==(other)
       @count == other.count &&
       @id == other.id &&
       @name == other.name &&
-      @category_id == other.category_id
+      @category == other.category
     end
     
     def get_models
-      Planefinder.get_models_for_category_and_make(@category_id, @id)
+      Planefinder.get_models_for_category_and_make(@category, @id)
     end
   end
 end
