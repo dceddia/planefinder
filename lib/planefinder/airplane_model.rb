@@ -20,5 +20,9 @@ module Planefinder
       @category == other.category &&
       @make == other.make
     end
+
+    def get_listings
+      Planefinder.search_by_model_make_category(self, @make, @category)
+    end
   end
 end

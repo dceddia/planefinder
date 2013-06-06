@@ -40,8 +40,15 @@ module Planefinder
     end
     
     it "should be able to retrieve listings" do
-      am = AirplaneModel.new(da40, double(AirplaneCategory), double(AirplaneMake))
-      pending "pass the string versions of model, category, and make to search_by..."
+      make = double(Planefinder::AirplaneMake, :name => "Diamond")
+      cat = double(Planefinder::AirplaneCategory, :name => "Single Engine Piston")
+      am = AirplaneModel.new(da40, cat, make)
+      listing = AirplaneListing.new({})
+      Planefinder.stub(:search_by_model_make_category).and_return([listing])
+      Planefinder.should_receive(:search_by_model_make_category).with(am, make, cat)
+
+      listings = am.get_listings
+      listings.first.should == listing
     end
   end
 end

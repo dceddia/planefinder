@@ -1,5 +1,6 @@
 require "httparty"
 require "json"
+require "uri"
 require_relative "./planefinder/version"
 require_relative "./planefinder/airplane_category"
 require_relative "./planefinder/airplane_make"
@@ -14,7 +15,8 @@ module Planefinder
   @@urls[:airplane_categories] = "/app_ajax/get_categories?listing_type_id=1"
   @@urls[:airplane_makes_for_category] = "/app_ajax/get_aircraft_makes?category_id=%s&make_type_id=1"
   @@urls[:airplane_models_for_category_and_make] = "/app_ajax/get_aircraft_models?category_id=%s&make_id=%s"
-  
+  @@urls[:search_by_model_make_category] = "/app_ajax/search?s-type=aircraft&model=%s&make=%s&category=%s"
+
   def self.valid_args?(*args)
     args.all? { |a| a.to_i > 0 }
   end
@@ -47,7 +49,13 @@ module Planefinder
     models
   end
   
-  def self.get_listings_for_model_make_category(model_id, make_id, cat_id)
+  def self.search_by_model_make_category(model, make, cat)
+    response = self.get(@@urls[:search_by_model_make_category] % [model, make, cat].map { |s| URI.escape(s.name) })
+    listings = []
+    JSON.parse(response.body).each do |listing|
+      listings << AirplaneListing.new(listing)
+    end
+    listings
   end
   
   class << Planefinder

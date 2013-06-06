@@ -4,8 +4,8 @@ module Planefinder
   describe AirplaneListing do
     context "constructor" do
       it "should accept 1 argument: json" do
-        json = JSON.parse(file_fixture('da40xl_airplanes.json')).first
-        a = AirplaneListing.new(json)
+        listing_hash = JSON.parse(file_fixture('da40xl_airplanes.json')).first
+        a = AirplaneListing.new(listing_hash)
       end
       
       it "should have some properties after initialization" do

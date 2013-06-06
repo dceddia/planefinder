@@ -74,8 +74,15 @@ describe Planefinder do
   end
   
   context "retrieving airplane listings" do
-    describe "#get_listings_for_model_make_category" do
-      pending "Rename this to search_by_model_make_category, and make it take strings, and call the /app_ajax/search url"
+    describe "#search_by_model_make_category" do
+      it "should retrieve an array of AirplaneListing" do
+        model = double(Planefinder::AirplaneModel, :name => "DA40XL")
+        make = double(Planefinder::AirplaneMake, :name => "Diamond")
+        cat = double(Planefinder::AirplaneCategory, :name => "Single Engine Piston")
+        listings = Planefinder.search_by_model_make_category(model, make, cat)
+        listings.each { |l| l.class.should == Planefinder::AirplaneListing }
+        listings.length.should == 6
+      end
     end
   end
 end
