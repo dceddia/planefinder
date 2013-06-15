@@ -1,11 +1,13 @@
 require "httparty"
 require "json"
 require "uri"
+require "geokit"
 require_relative "./planefinder/version"
 require_relative "./planefinder/airplane_category"
 require_relative "./planefinder/airplane_make"
 require_relative "./planefinder/airplane_model"
 require_relative "./planefinder/airplane_listing"
+require_relative "./planefinder/state_geocoder"
 
 module Planefinder
   include HTTParty
