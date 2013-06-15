@@ -14,9 +14,33 @@ module Planefinder
     
     def define_attributes(hash)
       hash.each do |k, v|
+        next if instance_variable_defined?("@#{k}") || self.class.method_defined?(k.to_sym)
         metaclass.send :attr_reader, k
         instance_variable_set("@#{k}".to_sym, v)
       end
+    end
+
+    def location
+      if @properties['zipcode']
+        @properties['zipcode']
+      elsif @properties['state'] and @properties['city']
+        @properties['city'] + ", " + @properties['state']
+      elsif best_phone
+        best_phone
+      elsif @properties['state']
+        @properties['state']
+      end
+    end
+
+    def best_phone
+      best_phone_order = ['home_phone', 'work_phone', 'aff_home_phone', 'aff_work_phone']
+      best_phone_order.each { |phone| return @properties[phone] if @properties[phone]}
+      return nil
+    end
+
+    def [](property_name)
+      property_name = property_name.to_s if property_name.class == Symbol
+      @properties[property_name]
     end
   end
 end
