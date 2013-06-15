@@ -4,7 +4,9 @@ module Geokit
   module Geocoders
     describe StateGeocoder do
       it "should return a LatLng when given a valid state" do
-        Geokit::Geocoders::StateGeocoder.geocode('MA').class.should == LatLng
+        loc = Geokit::Geocoders::StateGeocoder.geocode('MA')
+        loc.class.should == LatLng
+        loc.should be_valid
       end
 
       it "should return a LatLng for each state" do
@@ -17,8 +19,8 @@ module Geokit
       end
 
       it "should return invalid LatLng for invalid state or long state name" do
-        Geokit::Geocoders::StateGeocoder.geocode('New York').valid?.should be_nil
-        Geokit::Geocoders::StateGeocoder.geocode('XX').valid?.should be_nil
+        Geokit::Geocoders::StateGeocoder.geocode('New York').should_not be_valid
+        Geokit::Geocoders::StateGeocoder.geocode('XX').should_not be_valid
       end
     end
   end
