@@ -95,6 +95,16 @@ module Planefinder
         phones.delete('aff_home_phone')
         check_location_with_phones(phones, listings_by_phone['aff_work_phone'])
       end
+
+      it "should return a LatLng for state location" do
+        listing = AirplaneListing.new({"state" => 'MA'})
+        listing.location.class.should == Geokit::LatLng
+      end
+
+      it "should return invalid location for long state name or invalid state" do
+        AirplaneListing.new({"state" => 'Massachusetts'}).location.valid?.should be_nil
+        AirplaneListing.new({"state" => 'XX'}).location.valid?.should be_nil
+      end
     end
   end
 end

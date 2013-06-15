@@ -15,6 +15,11 @@ module Geokit
           Geokit::Geocoders::StateGeocoder.geocode(state).should == LatLng.new(lat, lng)
         end
       end
+
+      it "should return invalid LatLng for invalid state or long state name" do
+        Geokit::Geocoders::StateGeocoder.geocode('New York').valid?.should be_nil
+        Geokit::Geocoders::StateGeocoder.geocode('XX').valid?.should be_nil
+      end
     end
   end
 end
