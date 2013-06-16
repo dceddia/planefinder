@@ -62,14 +62,14 @@ module Planefinder
       end
 
       it "should use phone area code if no zipcode and no city+state is available" do
-        phone_only = AirplaneListing.new({'home_phone' => '1235551212'})
+        phone_only = AirplaneListing.new({'home_phone' => '9785551212'})
         zip_only = AirplaneListing.new({'zipcode' => '90210'})
         state_only = AirplaneListing.new({'state' => 'MA'})
-        phone_zip = AirplaneListing.new({'zipcode' => '90210', 'home_phone' => '1235551212'})
-        phone_state = AirplaneListing.new({'state' => 'MA', 'home_phone' => '1235551212'})
+        phone_zip = AirplaneListing.new({'zipcode' => '90210', 'home_phone' => '9785551212'})
+        phone_state = AirplaneListing.new({'state' => 'MA', 'home_phone' => '9785551212'})
         phone_only.location.should_not be_nil
         phone_zip.location.should == zip_only.location  # zipcode is more reliable than phone area code
-        phone_state.location.should_not == state_only.location
+        phone_state.location.should == state_only.location # area code roughly gets you into a state
       end
 
       def check_location_with_phones(phones, expected)
@@ -106,8 +106,13 @@ module Planefinder
         listing.location.class.should == Geokit::LatLng
       end
 
-      it "should retunr a LatLng for zipcode location" do
+      it "should return a LatLng for zipcode location" do
         listing = AirplaneListing.new({"zipcode" => '90210'})
+        listing.location.class.should == Geokit::LatLng
+      end
+
+      it "should return a LatLng for phone number" do
+        listing = AirplaneListing.new({"home_phone" => '9785551212'})
         listing.location.class.should == Geokit::LatLng
       end
 

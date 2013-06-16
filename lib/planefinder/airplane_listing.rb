@@ -26,7 +26,7 @@ module Planefinder
       elsif @properties['state'] and @properties['city']
         Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
       elsif best_phone
-        best_phone
+        Geokit::Geocoders::AirplaneGeocoder.geocode(best_phone)
       elsif @properties['state']
         Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['state'])
       end

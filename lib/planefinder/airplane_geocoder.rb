@@ -14,10 +14,12 @@ module Geokit
           when /,/
             city, state = address.split(',').map(&:strip)
             self.lookup_by_city_state(city, state)
-          when /\d{5}/
+          when /^\d{5}$/
             self.lookup_by_zip(address)
           when /[A-Z]{2}/
             self.lookup_by_state(address)
+          else
+            self.lookup_by_phone(address) if self.us_phone_number?(address)
         end
         record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
       end
@@ -28,20 +30,36 @@ module Geokit
 
       def self.lookup_by_city_state(city, state)
         Sequel.sqlite(self.db) do |db|
-          record = db[:zip_codes].first(:city => city, :state => state)
+          db[:zip_codes].first(:city => city, :state => state)
         end
       end
 
       def self.lookup_by_state(state)
         Sequel.sqlite(self.db) do |db|
-          record = db[:states].first(:abbreviation => state)
+          db[:states].first(:abbreviation => state)
         end
       end
 
       def self.lookup_by_zip(zip)
         Sequel.sqlite(self.db) do |db|
-          record = db[:zip_codes].first(:zip => zip)
+          db[:zip_codes].first(:zip => zip)
         end
+      end
+
+      def self.lookup_by_phone(phone)
+        area_code = self.sanitize_phone(phone)[0, 3]
+        record = Sequel.sqlite(self.db) do |db|
+          db[:zip_codes].where(Sequel.like(:area_codes, area_code)).first
+        end
+        record ? self.lookup_by_state(record[:state]) : nil
+      end
+
+      def self.sanitize_phone(str)
+        str.gsub(/[+( ).-]/, '')[/\d{10}$/]
+      end
+
+      def self.us_phone_number?(str)
+        self.sanitize_phone(str) =~ /^\d{10}$/
       end
     end
   end
