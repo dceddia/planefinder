@@ -101,6 +101,11 @@ module Planefinder
         listing.location.class.should == Geokit::LatLng
       end
 
+      it "should return a LatLng for city, state location" do
+        listing = AirplaneListing.new({"city" => "Boston", "state" => 'MA'})
+        listing.location.class.should == Geokit::LatLng
+      end
+
       it "should return invalid location for long state name or invalid state" do
         AirplaneListing.new({"state" => 'Massachusetts'}).location.should_not be_valid
         AirplaneListing.new({"state" => 'XX'}).location.should_not be_valid

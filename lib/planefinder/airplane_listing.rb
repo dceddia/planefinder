@@ -24,7 +24,7 @@ module Planefinder
       if @properties['zipcode']
         @properties['zipcode']
       elsif @properties['state'] and @properties['city']
-        @properties['city'] + ", " + @properties['state']
+        Geokit::Geocoders::CityStateGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
       elsif best_phone
         best_phone
       elsif @properties['state']
