@@ -1,5 +1,5 @@
 require "geokit"
-require "csv"
+require "sequel"
 
 module Geokit
   module Geocoders
@@ -11,15 +11,9 @@ module Geokit
       private
       def self.do_geocode(city_state, options = {})
         city, state = city_state.split(',').map(&:strip)
-        zips = {}
-        CSV.foreach(File.join(File.dirname(__FILE__), "../../db/zip_code_database.csv")) do |row|
-          # 0: zipcode, 2: primary_city, 5: state, 9: latitude, 10: longitude
-          zips[row[0]] = [row[2], row[5], row[9], row[10]]
-        end
-        zips.each do |k, info|
-          return LatLng.new(info[2], info[3]) if info[0].downcase == city.downcase && info[1] == state
-        end
-        LatLng.new
+        db = Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db"))
+        record = db[:zip_codes].first(:city => city, :state => state)
+        record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
       end
     end
   end

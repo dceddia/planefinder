@@ -10,10 +10,9 @@ module Geokit
     class StateGeocoder < Geocoder
       private
       def self.do_geocode(state, options = {})
-        CSV.foreach(File.join(File.dirname(__FILE__), "../../db/state_latlon.csv")) do |row|
-          return LatLng.new(row[1], row[2]) if row[0] == state
-        end
-        LatLng.new
+        db = Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db"))
+        record = db[:states].first(:abbreviation => state)
+        record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
       end
     end
   end

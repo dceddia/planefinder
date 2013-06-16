@@ -23,10 +23,6 @@ module Geokit
         Geokit::Geocoders::CityStateGeocoder.geocode('Boston, CA').should_not be_valid
         Geokit::Geocoders::CityStateGeocoder.geocode('Total Junk').should_not be_valid
       end
-
-      it "should be way faster" do
-        pending "create a database with a states_locations table and a city_state_locations table, then query it from the Geocoder(s)"
-      end
     end
   end
 end
