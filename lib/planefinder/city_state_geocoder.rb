@@ -11,9 +11,10 @@ module Geokit
       private
       def self.do_geocode(city_state, options = {})
         city, state = city_state.split(',').map(&:strip)
-        db = Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db"))
-        record = db[:zip_codes].first(:city => city, :state => state)
-        record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
+        Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db")) do |db|
+          record = db[:zip_codes].first(:city => city, :state => state)
+          record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
+        end
       end
     end
   end

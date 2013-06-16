@@ -10,9 +10,10 @@ module Geokit
     class StateGeocoder < Geocoder
       private
       def self.do_geocode(state, options = {})
-        db = Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db"))
-        record = db[:states].first(:abbreviation => state)
-        record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
+        Sequel.sqlite(File.join(File.dirname(__FILE__), "../../db/geocoding.db")) do |db|
+          record = db[:states].first(:abbreviation => state)
+          record ? LatLng.new(record[:latitude], record[:longitude]) : LatLng.new
+        end
       end
     end
   end
