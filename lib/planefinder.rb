@@ -7,8 +7,6 @@ require_relative "./planefinder/airplane_category"
 require_relative "./planefinder/airplane_make"
 require_relative "./planefinder/airplane_model"
 require_relative "./planefinder/airplane_listing"
-require_relative "./planefinder/state_geocoder"
-require_relative "./planefinder/city_state_geocoder"
 require_relative "./planefinder/airplane_geocoder"
 
 module Planefinder

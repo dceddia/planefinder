@@ -24,11 +24,11 @@ module Planefinder
       if @properties['zipcode']
         Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['zipcode'])
       elsif @properties['state'] and @properties['city']
-        Geokit::Geocoders::CityStateGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
+        Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
       elsif best_phone
         best_phone
       elsif @properties['state']
-        Geokit::Geocoders::StateGeocoder.geocode(@properties['state'])
+        Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['state'])
       end
     end
 
