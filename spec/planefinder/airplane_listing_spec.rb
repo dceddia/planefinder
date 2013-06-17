@@ -156,7 +156,7 @@ module Planefinder
       end
 
       it "should calculate location in a specific order" do
-        pending "home zip, city+state, state, phone should be first, then affiliate versions of those things"
+        pending "home zip, city+state, state, phone should be first, then affiliate versions of those things. IDEA: Make an array of [property, geocoder], ordered with most accurate property first"
       end
 
       context "sorting by location" do
