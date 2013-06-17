@@ -96,6 +96,23 @@ module Planefinder
         check_location_with_phones(phones, listings_by_phone['aff_work_phone'])
       end
 
+      def check_location_with_zips(zips, expected)
+        listing = AirplaneListing.new(zips)
+        listing.location.should_not be_nil
+        listing.location.should == expected.location  
+      end
+
+      it "should use the best available phone number" do
+        best_zip_order = ['zipcode', 'aff_zip']
+        zips = {'zipcode' => '90210', 'aff_zip' => '02118'}
+        listings_by_zip = {}
+        zips.each {|k, v| listings_by_zip[k] = AirplaneListing.new({k => v})}
+
+        check_location_with_zips(zips, listings_by_zip['zipcode'])
+        zips.delete('zipcode')
+        check_location_with_zips(zips, listings_by_zip['aff_zip'])
+      end
+
       it "should return a LatLng for state location" do
         listing = AirplaneListing.new({"state" => 'MA'})
         listing.location.class.should == Geokit::LatLng
@@ -119,6 +136,42 @@ module Planefinder
       it "should return invalid location for long state name or invalid state" do
         AirplaneListing.new({"state" => 'Massachusetts'}).location.should_not be_valid
         AirplaneListing.new({"state" => 'XX'}).location.should_not be_valid
+      end
+
+      it "should return properties" do
+        initial_properties = {"state" => 'MA', "city" => "Boston"}
+        l = AirplaneListing.new(initial_properties)
+        l.properties.should == initial_properties
+      end
+
+      it "should support to_s" do
+        l = AirplaneListing.new({"state" => 'MA', "city" => "Boston"})
+        str = l.to_s
+        str.should == l.properties.inspect
+      end
+
+      it "should provide location for a real listing" do
+        l = AirplaneListing.new(JSON.parse(file_fixture('da40xl_airplanes.json')).first)
+        l.location.should be_valid
+      end
+
+      it "should calculate location in a specific order" do
+        pending "home zip, city+state, state, phone should be first, then affiliate versions of those things"
+      end
+
+      context "sorting by location" do
+        it "should be sortable by location" do
+          listings = JSON.parse(file_fixture('da40xl_airplanes.json')).map { |json| AirplaneListing.new(json) }
+          listings.each do |l|
+            l.location.should be_valid
+          end
+          here = Geokit::LatLng.new(72, 42)
+
+          listings.sort! do |a, b|
+            a.location.distance_to(here) <=> b.location.distance_to(here)
+          end
+          pending "find some reasonable way to check this result"
+        end
       end
     end
   end

@@ -1,8 +1,14 @@
 module Planefinder
   # Contains an airplane listing, including contact info, total engine time, etc.
   class AirplaneListing
+    attr_reader :properties
+
     def initialize(listing_hash)
-      @properties = listing_hash
+      # replace empty strings with nil
+      @properties = listing_hash.inject({}) do |h, (k,v)|
+        v == "" ? h[k] = nil : h[k] = v
+        h
+      end
       define_attributes(@properties)
     end
     
@@ -21,8 +27,8 @@ module Planefinder
     end
 
     def location
-      if @properties['zipcode']
-        Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['zipcode'])
+      if best_zip
+        Geokit::Geocoders::AirplaneGeocoder.geocode(best_zip)
       elsif @properties['state'] and @properties['city']
         Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
       elsif best_phone
@@ -30,6 +36,12 @@ module Planefinder
       elsif @properties['state']
         Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['state'])
       end
+    end
+
+    def best_zip
+      best_zip_order = ['zipcode', 'aff_zip']
+      best_zip_order.each { |key| return @properties[key] if @properties[key]}
+      return nil
     end
 
     def best_phone
@@ -41,6 +53,10 @@ module Planefinder
     def [](property_name)
       property_name = property_name.to_s if property_name.class == Symbol
       @properties[property_name]
+    end
+
+    def to_s
+      @properties.inspect
     end
   end
 end
