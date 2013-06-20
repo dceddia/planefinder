@@ -3,6 +3,9 @@ module Planefinder
   class AirplaneListing
     attr_reader :properties
 
+    PREFERRED_PROPERTY_ORDER = ['zipcode', 'city', 'state', 'home_phone', 'work_phone', 'fax',
+                                'aff_zip', 'aff_city', 'aff_state', 'aff_home_phone', 'aff_work_phone', 'aff_fax']
+
     def initialize(listing_hash)
       # replace empty strings with nil
       @properties = listing_hash.inject({}) do |h, (k,v)|
@@ -27,27 +30,16 @@ module Planefinder
     end
 
     def location
-      if best_zip
-        Geokit::Geocoders::AirplaneGeocoder.geocode(best_zip)
-      elsif @properties['state'] and @properties['city']
-        Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['city'] + ", " + @properties['state'])
-      elsif best_phone
-        Geokit::Geocoders::AirplaneGeocoder.geocode(best_phone)
-      elsif @properties['state']
-        Geokit::Geocoders::AirplaneGeocoder.geocode(@properties['state'])
+      PREFERRED_PROPERTY_ORDER.each do |p|
+        if p =~ /city/
+          city = p
+          state = p.gsub('city', 'state')
+          return Geokit::Geocoders::AirplaneGeocoder.geocode("#{@properties[city]}, #{@properties[state]}") if @properties[city] and @properties[state]
+        else
+          return Geokit::Geocoders::AirplaneGeocoder.geocode(@properties[p]) if @properties[p]
+        end
       end
-    end
-
-    def best_zip
-      best_zip_order = ['zipcode', 'aff_zip']
-      best_zip_order.each { |key| return @properties[key] if @properties[key]}
-      return nil
-    end
-
-    def best_phone
-      best_phone_order = ['home_phone', 'work_phone', 'aff_home_phone', 'aff_work_phone']
-      best_phone_order.each { |phone| return @properties[phone] if @properties[phone]}
-      return nil
+      nil
     end
 
     def [](property_name)
