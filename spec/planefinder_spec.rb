@@ -85,4 +85,8 @@ describe Planefinder do
       end
     end
   end
+
+  context "searching by freeform string" do
+    pending "should be supported"
+  end
 end
