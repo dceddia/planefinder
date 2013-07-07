@@ -30,16 +30,7 @@ module Planefinder
     end
 
     def location
-      PREFERRED_PROPERTY_ORDER.each do |p|
-        if p =~ /city/
-          city = p
-          state = p.gsub('city', 'state')
-          return Geokit::Geocoders::AirplaneGeocoder.geocode("#{@properties[city]}, #{@properties[state]}") if @properties[city] and @properties[state]
-        else
-          return Geokit::Geocoders::AirplaneGeocoder.geocode(@properties[p]) if @properties[p]
-        end
-      end
-      nil
+      Geokit::Geocoders::AirplaneGeocoder.geocode(location_text) if location_type
     end
 
     def location_type
@@ -52,6 +43,7 @@ module Planefinder
           return p if @properties[p]
         end
       end
+      nil
     end
 
     def location_text
