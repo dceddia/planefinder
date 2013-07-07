@@ -27,7 +27,7 @@ First, let's require planefinder and get a list of airplane categories:
     require 'planefinder'
 
     categories = Planefinder.get_categories
-    categories.map(&:name)    #=> ["Single Engine Piston", "Multi Engine Piston", "TurboProp", "Jet", ...]
+    categories.map(&:name)    #=> ["Single Engine Piston", "Multi Engine Piston", "TurboProp", ...]
 
 From here, we can take a look at the makes within a category. This will include manufacturers like Cessna, Piper, and Cirrus.
 
@@ -37,7 +37,7 @@ Lets say we want to look for a Cirrus.
 
 	cirrus = makes.select { |m| m.name =~ /Cirrus/ }.first
 	cirrus_models = cirrus.get_models
-	cirrus_models.map(&:name)  #=> ["SR20", "SR20-G2", "SR20-G2 GTS", "SR20-G3", "SR20-GTS", "SR22", ... ]
+	cirrus_models.map(&:name)  #=> ["SR20", "SR20-G2", "SR20-G2 GTS", "SR20-G3", ... ]
 
 I'd like to look for an SR22 or an SR20.
 
@@ -50,18 +50,24 @@ Lets find all the listings for sale for that make/model:
 
 What I really want is SR20s and SR22s for sale near me. Flying across the country to look at airplanes will get expensive quick...
 
-	here = Geokit::Geocoders::AirplaneGeocoder.geocode("02118")   # 02118 is the zipcode for Boston, MA
-	nearby_listings = listings.reject { |l| l.location.distance_from(here) > 500 }  # unit defaults to miles (statute, that is)
+	# 02118 is the zipcode for Boston, MA
+	here = Geokit::Geocoders::AirplaneGeocoder.geocode("02118")
+
+	# unit defaults to miles (statute, that is)
+	nearby_listings = listings.reject { |l| l.location.distance_from(here) > 500 } 
 	nearby_listings.length   #=> 7 -- that's better
-	nearby_listings.each { |l| puts l.price + " " + l.location_text + " (" + l.location_type + ")" }
-		#=>
-		# 169000.00 04605 (zipcode)
-		# 159900.00 Fredericksburg, VA (city, state)
-		# 269000.00 VA (state)
-		# 0.00 Portsmouth, NH (city, state)
-		# 199000.00 NY (state)
-		# 189000.00 Petersburg, VA (city, state)
-		# 169000.00 Providence, RI (city, state)
+	nearby_listings.each do |l| 
+		puts l.price + " " + l.location_text + " (" + l.location_type + ")"
+	end 
+
+	#=>
+	# 169000.00 04605 (zipcode)
+	# 159900.00 Fredericksburg, VA (city, state)
+	# 269000.00 VA (state)
+	# 0.00 Portsmouth, NH (city, state)
+	# 199000.00 NY (state)
+	# 189000.00 Petersburg, VA (city, state)
+	# 169000.00 Providence, RI (city, state)
 
 From here I can look at the listings and see which ones I might want to investigate.
 
@@ -69,10 +75,17 @@ From here I can look at the listings and see which ones I might want to investig
 
 Geocoding support is built on top of Geokit (http://geokit.rubyforge.org/). The `AirplaneGeocoder` class is a custom geocoder that lets you search by zipcode, city+state, state, and phone number. Here are some examples:
 
-	boston = Geokit::Geocoders::AirplaneGeocoder.geocode("02118")   # search by zipcode
-	san_fran = Geokit::Geocoders::AirplaneGeocoder.geocode("San Francisco, CA")   # search by 'city, state'
-	colorado = Geokit::Geocoders::AirplaneGeocoder.geocode("CO")    # search by 2-letter state code
-	maine = Geokit::Geocoders::AirplaneGeocoder.geocode("203-555-1212")   # search by phone number
+	# search by zipcode
+	boston = Geokit::Geocoders::AirplaneGeocoder.geocode("02118")   
+
+	# search by 'city, state'
+	san_fran = Geokit::Geocoders::AirplaneGeocoder.geocode("San Francisco, CA")
+
+	# search by 2-letter state code   
+	colorado = Geokit::Geocoders::AirplaneGeocoder.geocode("CO")    
+	
+	# search by phone number
+	maine = Geokit::Geocoders::AirplaneGeocoder.geocode("203-555-1212")   
 
 Phone number searches just strip off the area code and resolve to a state.
 
