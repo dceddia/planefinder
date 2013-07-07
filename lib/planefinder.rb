@@ -37,7 +37,7 @@ module Planefinder
     response = self.get(@@urls[:airplane_makes_for_category] % category.id)
     makes = []
     JSON.parse(response.body).each do |make|
-      makes << AirplaneMake.new(make, category.id)
+      makes << AirplaneMake.new(make, category)
     end
     makes
   end
@@ -46,7 +46,7 @@ module Planefinder
     response = self.get(@@urls[:airplane_models_for_category_and_make] % [category.id, make.id])
     models = []
     JSON.parse(response.body).each do |model|
-      models << AirplaneModel.new(model, category.id, make.id)
+      models << AirplaneModel.new(model, category, make)
     end
     models
   end

@@ -41,6 +41,12 @@ describe Planefinder do
           makes.length.should == 9
           makes.select { |m| m.name == 'Robinson' }.length.should == 1
         end
+
+        it "should create AirplaneMakes with real category objects" do
+          cat = double(Planefinder::AirplaneCategory, :id => 100)
+          makes = Planefinder.send(method_name, cat)
+          makes.first.category.should == cat          
+        end
       end
     end
   end
@@ -68,6 +74,14 @@ describe Planefinder do
           make = double(Planefinder::AirplaneMake, :id => 406)
           models = Planefinder.send(method_name, cat, make)
           models.select { |m| m.name == 'R44' }.length.should == 1
+        end
+
+        it "should create AirplaneModels with real category and make objects" do
+          cat = double(Planefinder::AirplaneCategory, :id => 100)
+          make = double(Planefinder::AirplaneMake, :id => 406)
+          models = Planefinder.send(method_name, cat, make)
+          models.first.category.should == cat
+          models.first.make.should == make
         end
       end
     end
