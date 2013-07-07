@@ -155,12 +155,13 @@ module Planefinder
         l.location.should be_valid
       end
 
-      it "should calculate location in a specific order" do
+      context "calculating location in a specific order" do
+        let(:properties) {
         # zipcode, city+state, state, phone
         # zipcode and city+state are about equivalent, and achieve the same accuracy
         # state and phone area code achieve the same accuracy
         # home info is better than seller/company info
-        properties = {"zipcode" => "02118", # Boston, MA
+        { "zipcode" => "02118", # Boston, MA
                       "city" => "Lowell",   # Lowell, MA (with state)
                       "state" => "MA",      # just MA
                       "home_phone" => "6035551212",   # NH
@@ -172,23 +173,44 @@ module Planefinder
                       "aff_home_phone" => "8015551212",  # UT
                       "aff_work_phone" => "2065551212",  # WA
                       "aff_fax" => "5035551212"          # OR
-                     }
-        property_order = ['zipcode', 'city', 'state', 'home_phone', 'work_phone', 'fax',
-                          'aff_zip', 'aff_city', 'aff_state', 'aff_home_phone', 'aff_work_phone', 'aff_fax']
+        } }
+        let(:property_order) { ['zipcode', 'city', 'state', 'home_phone', 'work_phone', 'fax',
+                          'aff_zip', 'aff_city', 'aff_state', 'aff_home_phone', 'aff_work_phone', 'aff_fax'] }
 
-        Geokit::Geocoders::AirplaneGeocoder.stub(:geocode)
-        property_order.each do |p|
-          if p =~ /city/
-            Geokit::Geocoders::AirplaneGeocoder.should_receive(:geocode).with("#{properties[p]}, #{properties[p.gsub('city', 'state')]}")
-          else
-            Geokit::Geocoders::AirplaneGeocoder.should_receive(:geocode).with(properties[p])
+        it "should calculate location" do
+          Geokit::Geocoders::AirplaneGeocoder.stub(:geocode)
+          property_order.each do |p|
+            if p =~ /city/
+              Geokit::Geocoders::AirplaneGeocoder.should_receive(:geocode).with("#{properties[p]}, #{properties[p.gsub('city', 'state')]}")
+            else
+              Geokit::Geocoders::AirplaneGeocoder.should_receive(:geocode).with(properties[p])
+            end
+
+            listing = AirplaneListing.new(properties)
+            loc = listing.location
+            properties.delete(p)
           end
-
-          listing = AirplaneListing.new(properties)
-          loc = listing.location
-          properties.delete(p)
         end
-        #pending "home zip, city+state, state, phone should be first, then affiliate versions of those things. IDEA: Make an array of [property, geocoder], ordered with most accurate property first"
+
+        it "should know location type and text description" do
+          Geokit::Geocoders::AirplaneGeocoder.stub(:geocode)
+          property_order.each do |p|
+            listing = AirplaneListing.new(properties)
+            if p =~ /city/
+              # there are 2 types of city/state: the normal one (city, state) and the affiliate one (aff_city, aff_state)
+              city = p
+              state = p.gsub('city', 'state')
+              listing.location_text.should == "#{properties[city]}, #{properties[state]}"
+              listing.location_type.should == "#{city}, #{state}"
+              listing.location_description.should == "#{city}, #{state}: #{properties[city]}, #{properties[state]}"
+            else
+              listing.location_text.should == "#{properties[p]}"
+              listing.location_type.should == "#{p}"
+              listing.location_description.should == "#{p}: #{properties[p]}"
+            end
+            properties.delete(p)
+          end
+        end
       end
     end
   end

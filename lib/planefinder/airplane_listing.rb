@@ -42,6 +42,28 @@ module Planefinder
       nil
     end
 
+    def location_type
+      PREFERRED_PROPERTY_ORDER.each do |p|
+        if p =~ /city/
+          city = p
+          state = p.gsub('city', 'state')
+          return "#{city}, #{state}" if @properties[city] and @properties[state]
+        else
+          return p if @properties[p]
+        end
+      end
+    end
+
+    def location_text
+      # the type might be a "city, state", but otherwise treat it like a single value
+      types = location_type.split(", ")
+      types.length == 1 ? @properties[types[0]] :  "#{@properties[types[0]]}, #{@properties[types[1]]}"
+    end
+
+    def location_description
+      location_type + ": " + location_text
+    end
+
     def [](property_name)
       property_name = property_name.to_s if property_name.class == Symbol
       @properties[property_name]
