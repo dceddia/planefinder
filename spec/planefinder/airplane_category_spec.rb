@@ -27,7 +27,7 @@ module Planefinder
     it "should be able to fetch makes for its category" do
       ac = AirplaneCategory.new(json_categories.first)
       makes = [1, 2, 3]
-      Planefinder.stub(:get_makes_for_category) { makes }
+      Planefinder.should_receive(:get_makes_for_category).with(ac) { makes }
       ac.get_makes.should == makes
     end
   end

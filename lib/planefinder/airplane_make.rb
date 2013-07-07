@@ -18,7 +18,7 @@ module Planefinder
     end
     
     def get_models
-      Planefinder.get_models_for_category_and_make(@category, @id)
+      Planefinder.get_models_for_category_and_make(@category, self)
     end
   end
 end
