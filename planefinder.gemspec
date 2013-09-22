@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Planefinder::VERSION
   spec.authors       = ["Dave Ceddia"]
   spec.email         = ["dceddia@gmail.com"]
-  spec.description   = %q{Find airplanes for sale and search the results}
-  spec.summary       = %q{Find airplanes for sale and search the results}
-  spec.homepage      = ""
+  spec.description   = %q{Find airplanes for sale and their approximate locations}
+  spec.summary       = %q{Find airplanes for sale and narrow results by location}
+  spec.homepage      = "https://github.com/dceddia/planefinder"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)

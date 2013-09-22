@@ -1,6 +1,7 @@
 module Planefinder
   # Contains categories like "Single Engine Piston" or "Jet" or "Turbine Helicopter"
   class AirplaneCategory
+    include JSONable
     attr_reader :count, :id, :name, :sort_priority
 
     def initialize(json_category)

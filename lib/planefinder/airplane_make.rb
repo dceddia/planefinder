@@ -1,6 +1,7 @@
 module Planefinder
   # Contains aircraft makes like "Cessna" or "Robinson"
   class AirplaneMake
+    include JSONable
     attr_reader :count, :id, :name, :category
     
     def initialize(json, category)

@@ -1,6 +1,7 @@
 module Planefinder
   # Contains an airplane listing, including contact info, total engine time, etc.
   class AirplaneListing
+    include JSONable
     attr_reader :properties
 
     PREFERRED_PROPERTY_ORDER = ['zipcode', 'city', 'state', 'home_phone', 'work_phone', 'fax',
